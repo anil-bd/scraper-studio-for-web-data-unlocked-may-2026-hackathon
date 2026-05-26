@@ -98,19 +98,21 @@ brightdata login
 
 **Paste this into your coding agent:**
 
-> Build me a competitor-customer intelligence pipeline using Bright Data Scraper Studio.
->
-> Target: `https://linear.app/customers` (swap to your competitor of choice; pick ONE site, not multiple).
->
-> 1. Verify `bdata --version`. Stop if it fails.
-> 2. Build a Discovery scraper: `bdata scraper create https://linear.app/customers` with the description: *"For each customer card on this page, extract company_name, industry_tag, short_summary, case_study_url (the link to the detailed customer story). Return one array element per card."* Save the Collector ID as `DISCOVERY_ID`.
-> 3. Build a PDP scraper: `bdata scraper create <pick any single case-study URL>` with the description: *"Extract from this customer case study page: company_name, industry, company_size_if_mentioned, use_case (one-sentence summary of what they use this product for), customer_quote (the main testimonial), results (key metrics quoted, like '40% faster' or '$2M saved'), customer_role_if_quoted, primary_product_used."* Save as `PDP_ID`.
-> 4. Run Discovery: `bdata scraper run $DISCOVERY_ID https://linear.app/customers --json | jq -r '.[].case_study_url' > case-studies.txt`
-> 5. Batch-run PDP: `bdata scraper run $PDP_ID --input-file case-studies.txt -o customers.json`
-> 6. Write 30 lines of Python or Node that loads `customers.json`, groups by `industry`, counts customers per industry, prints the top 5 industries the competitor sells to.
-> 7. Suggest how to wire this into a daily monitor (cron + Slack) that alerts when a new competitor case study lands.
->
-> Constraints: real data only. Pick ONE competitor for v1; iterate per competitor with a fresh scraper. If the listing page has lazy-load / "view more" pagination, mention that in step 2 and the AI will handle the scroll behavior.
+```text
+Build me a competitor-customer intelligence pipeline using Bright Data Scraper Studio.
+
+Target: https://linear.app/customers (swap to your competitor of choice; pick ONE site, not multiple).
+
+1. Verify `bdata --version`. Stop if it fails.
+2. Build a Discovery scraper: `bdata scraper create https://linear.app/customers` with the description: "For each customer card on this page, extract company_name, industry_tag, short_summary, case_study_url (the link to the detailed customer story). Return one array element per card." Save the Collector ID as DISCOVERY_ID.
+3. Build a PDP scraper: `bdata scraper create <pick any single case-study URL>` with the description: "Extract from this customer case study page: company_name, industry, company_size_if_mentioned, use_case (one-sentence summary of what they use this product for), customer_quote (the main testimonial), results (key metrics quoted, like '40% faster' or '$2M saved'), customer_role_if_quoted, primary_product_used." Save as PDP_ID.
+4. Run Discovery: `bdata scraper run $DISCOVERY_ID https://linear.app/customers --json | jq -r '.[].case_study_url' > case-studies.txt`
+5. Batch-run PDP: `bdata scraper run $PDP_ID --input-file case-studies.txt -o customers.json`
+6. Write 30 lines of Python or Node that loads customers.json, groups by industry, counts customers per industry, prints the top 5 industries the competitor sells to.
+7. Suggest how to wire this into a daily monitor (cron + Slack) that alerts when a new competitor case study lands.
+
+Constraints: real data only. Pick ONE competitor for v1; iterate per competitor with a fresh scraper. If the listing page has lazy-load / "view more" pagination, mention that in step 2 and the AI will handle the scroll behavior.
+```
 
 ---
 
@@ -122,19 +124,21 @@ brightdata login
 
 **Paste this into your coding agent:**
 
-> Build me a YC W26 growth-velocity tracker using Bright Data Scraper Studio.
->
-> Targets: `https://www.ycombinator.com/companies?batch=W26` (batch listing) and `https://www.ycombinator.com/companies/<slug>` (per-company profile, same template across all companies).
->
-> 1. Verify `bdata --version`.
-> 2. Discovery scraper on the batch page: `bdata scraper create https://www.ycombinator.com/companies?batch=W26` with description: *"For each company card on this page, extract company_name, one_line_tagline, vertical_tags (array of category badges), profile_url (the link to /companies/<slug>). Return one array element per card. The page is a single grid; no pagination."* Save as `DISCOVERY_ID`.
-> 3. PDP scraper on one profile (seed with any YC company): `bdata scraper create https://www.ycombinator.com/companies/anthropic` with description: *"Extract from this YC company profile: company_name, yc_batch (e.g. S21, W26), one_line_tagline, long_description, vertical_tags (array), team_size_number (integer), status (Active / Acquired / Public / Inactive), founded_year, locations (array of city names), founders (array of objects with name and title), launched_products (array of names if shown), website_url."* Save as `PDP_ID`.
-> 4. Run Discovery: `bdata scraper run $DISCOVERY_ID https://www.ycombinator.com/companies?batch=W26 --json | jq -r '.[].profile_url' > w26-companies.txt`
-> 5. Batch-run PDP: `bdata scraper run $PDP_ID --input-file w26-companies.txt -o w26-profiles.json`. W26 has ~80 companies; the CLI silently auto-falls back to the batch endpoint when needed (that's expected).
-> 6. Write 30 lines that loads `w26-profiles.json`, sorts by `team_size_number` descending, prints the top 10 W26 companies by team size, and saves the run as `w26-profiles-$(date +%Y%m%d).json`.
-> 7. Suggest how to re-run weekly and diff against the previous week's snapshot to surface companies whose `team_size_number` grew > 25% week-over-week.
->
-> Constraints: real data only. YC profile pages are public, no login required. If a specific field is not on the page (e.g. founder LinkedIn URLs), return `null` rather than inventing a value.
+```text
+Build me a YC W26 growth-velocity tracker using Bright Data Scraper Studio.
+
+Targets: https://www.ycombinator.com/companies?batch=W26 (batch listing) and https://www.ycombinator.com/companies/<slug> (per-company profile, same template across all companies).
+
+1. Verify `bdata --version`.
+2. Discovery scraper on the batch page: `bdata scraper create https://www.ycombinator.com/companies?batch=W26` with description: "For each company card on this page, extract company_name, one_line_tagline, vertical_tags (array of category badges), profile_url (the link to /companies/<slug>). Return one array element per card. The page is a single grid; no pagination." Save as DISCOVERY_ID.
+3. PDP scraper on one profile (seed with any YC company): `bdata scraper create https://www.ycombinator.com/companies/anthropic` with description: "Extract from this YC company profile: company_name, yc_batch (e.g. S21, W26), one_line_tagline, long_description, vertical_tags (array), team_size_number (integer), status (Active / Acquired / Public / Inactive), founded_year, locations (array of city names), founders (array of objects with name and title), launched_products (array of names if shown), website_url." Save as PDP_ID.
+4. Run Discovery: `bdata scraper run $DISCOVERY_ID https://www.ycombinator.com/companies?batch=W26 --json | jq -r '.[].profile_url' > w26-companies.txt`
+5. Batch-run PDP: `bdata scraper run $PDP_ID --input-file w26-companies.txt -o w26-profiles.json`. W26 has ~80 companies; the CLI silently auto-falls back to the batch endpoint when needed (that's expected).
+6. Write 30 lines that loads w26-profiles.json, sorts by team_size_number descending, prints the top 10 W26 companies by team size, and saves the run as w26-profiles-$(date +%Y%m%d).json.
+7. Suggest how to re-run weekly and diff against the previous week's snapshot to surface companies whose team_size_number grew > 25% week-over-week.
+
+Constraints: real data only. YC profile pages are public, no login required. If a specific field is not on the page (e.g. founder LinkedIn URLs), return null rather than inventing a value.
+```
 
 ---
 
@@ -146,18 +150,20 @@ brightdata login
 
 **Paste this into your coding agent:**
 
-> Build me a Fortinet PSIRT vulnerability monitor using Bright Data Scraper Studio.
->
-> Targets: `https://www.fortiguard.com/psirt` (advisory index, paginated via `?page=1..20`) + per-advisory detail pages.
->
-> 1. Verify `bdata --version`.
-> 2. Discovery scraper on the index: `bdata scraper create https://www.fortiguard.com/psirt` with description: *"For each advisory row in the main table on this page, extract advisory_id (FG-IR-XX-XXX format), cve_ids (array of CVE-YYYY-NNNNN strings; can be multiple), title, description_snippet, affected_products_summary (raw product+versions text), published_date_iso (parse 'May 12, 2026' into '2026-05-12'), severity (Critical / High / Medium / Low / Info), component (CLI / API / GUI / OTHERS), attack_type (Authenticated / Unauthenticated), discovered (Internal / External / Third-Party), advisory_url. Return one array element per row. The page has pagination; only scrape what's rendered on this single URL."* Save as `DISCOVERY_ID`.
-> 3. (Optional, for depth) PDP scraper on a single advisory: `bdata scraper create https://www.fortiguard.com/psirt/FG-IR-26-131` (use any advisory ID from step 2) with description: *"Extract from this Fortinet PSIRT advisory: advisory_id, cve_ids (array), title, full_description, severity, cvss_score (if shown), affected_products (array of objects with product_name and affected_versions array), patch_status (e.g. 'Fixed in FortiOS 7.4.5'), published_date_iso, last_updated_iso, references (array of URLs)."* Save as `PDP_ID`.
-> 4. Run Discovery across the first 5 pages: build `pages.txt` with `https://www.fortiguard.com/psirt?page=1` through `?page=5`, then `bdata scraper run $DISCOVERY_ID --input-file pages.txt -o fortinet-advisories.json`.
-> 5. Write 30 lines that: (a) loads `fortinet-advisories.json`, (b) loads a `fleet.yml` listing your installed Fortinet products + versions (e.g. `FortiOS: [7.4.3, 7.6.1]`, `FortiAnalyzer: [7.6.4]`), (c) matches each advisory against your fleet using fuzzy product-name + version-range match on `affected_products_summary`, (d) prints CVE / severity / required-patch for matches, (e) exits non-zero if any match was published in the last 7 days (so a cron can page you).
-> 6. Suggest how to extend with the PDP scraper (step 3) to enrich each match with the exact patched version + remediation steps from the advisory body.
->
-> Constraints: security demo only; no live exploits, no PoC code, no exploit details beyond what Fortinet publicly publishes. Monitoring + fleet-matching metadata only.
+```text
+Build me a Fortinet PSIRT vulnerability monitor using Bright Data Scraper Studio.
+
+Targets: https://www.fortiguard.com/psirt (advisory index, paginated via ?page=1..20) + per-advisory detail pages.
+
+1. Verify `bdata --version`.
+2. Discovery scraper on the index: `bdata scraper create https://www.fortiguard.com/psirt` with description: "For each advisory row in the main table on this page, extract advisory_id (FG-IR-XX-XXX format), cve_ids (array of CVE-YYYY-NNNNN strings; can be multiple), title, description_snippet, affected_products_summary (raw product+versions text), published_date_iso (parse 'May 12, 2026' into '2026-05-12'), severity (Critical / High / Medium / Low / Info), component (CLI / API / GUI / OTHERS), attack_type (Authenticated / Unauthenticated), discovered (Internal / External / Third-Party), advisory_url. Return one array element per row. The page has pagination; only scrape what's rendered on this single URL." Save as DISCOVERY_ID.
+3. (Optional, for depth) PDP scraper on a single advisory: `bdata scraper create https://www.fortiguard.com/psirt/FG-IR-26-131` (use any advisory ID from step 2) with description: "Extract from this Fortinet PSIRT advisory: advisory_id, cve_ids (array), title, full_description, severity, cvss_score (if shown), affected_products (array of objects with product_name and affected_versions array), patch_status (e.g. 'Fixed in FortiOS 7.4.5'), published_date_iso, last_updated_iso, references (array of URLs)." Save as PDP_ID.
+4. Run Discovery across the first 5 pages: build pages.txt with https://www.fortiguard.com/psirt?page=1 through ?page=5, then `bdata scraper run $DISCOVERY_ID --input-file pages.txt -o fortinet-advisories.json`.
+5. Write 30 lines that: (a) loads fortinet-advisories.json, (b) loads a fleet.yml listing your installed Fortinet products + versions (e.g. FortiOS: [7.4.3, 7.6.1], FortiAnalyzer: [7.6.4]), (c) matches each advisory against your fleet using fuzzy product-name + version-range match on affected_products_summary, (d) prints CVE / severity / required-patch for matches, (e) exits non-zero if any match was published in the last 7 days (so a cron can page you).
+6. Suggest how to extend with the PDP scraper (step 3) to enrich each match with the exact patched version + remediation steps from the advisory body.
+
+Constraints: security demo only; no live exploits, no PoC code, no exploit details beyond what Fortinet publicly publishes. Monitoring + fleet-matching metadata only.
+```
 
 ---
 
