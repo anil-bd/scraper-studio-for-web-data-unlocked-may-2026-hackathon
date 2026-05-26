@@ -86,10 +86,6 @@ Three paste-into-your-agent prompts, one per lablab track. Each uses Scraper Stu
 # One-time install + auth (browser opens for API key)
 npm install -g @brightdata/cli
 brightdata login
-
-# Sanity check
-bdata --version
-bdata zones
 ```
 
 ---
