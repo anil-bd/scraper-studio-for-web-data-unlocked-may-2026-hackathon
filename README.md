@@ -1,9 +1,7 @@
-# scraper-studio-hackathon-starter
-
 # A working web scraper in 10 minutes. Without writing one.
 ### Describe what you want. Bright Data writes and runs the scraper for you.
 
-**For the [Bright Data AI Agents + Web Data Hackathon at lablab.ai](https://lablab.ai/ai-hackathons/brightdata-ai-agents-web-data-hackathon).**
+**[→ For the Bright Data AI Agents + Web Data Hackathon at lablab.ai](https://lablab.ai/ai-hackathons/brightdata-ai-agents-web-data-hackathon)**
 
 **▶ Watch first (2 min each):** [Scraper Studio demo](https://drive.google.com/file/d/1DBJUSPZ_uamz_nY37vNm8SqdEEiR9yPk/view?usp=sharing) · [Self-healing demo](https://drive.google.com/file/d/1gEhb1qzsVgDazlcA7K3ZwJzNjNdCdecB/view?usp=sharing)
 
