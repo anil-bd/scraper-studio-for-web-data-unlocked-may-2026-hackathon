@@ -77,7 +77,7 @@ Three paste-into-your-agent prompts, one per lablab track. Each uses Scraper Stu
 | Track | Pattern | Target site | What you ship |
 |---|---|---|---|
 | **GTM Intelligence** | Discovery + PDP | A competitor's `/customers` page | CSV of "who they're actually selling to" |
-| **Finance & Market Intelligence** | Discovery + PDP | `ycombinator.com/companies?batch=W26` | Growth-leader CSV ranked by team size |
+| **Finance & Market Intelligence** | Discovery + PDP | `ycombinator.com/companies?batch=Winter%202026` | Growth-leader CSV ranked by team size |
 | **Security & Compliance** | Discovery + PDP | `fortiguard.com/psirt` (or any vendor PSIRT) | Patch-tickets matched against your fleet |
 
 **Before you paste any of them:**
@@ -116,25 +116,25 @@ Constraints: real data only. Pick ONE competitor for v1; iterate per competitor 
 
 ---
 
-### Track 2: Finance & Market Intelligence · YC W26 growth velocity
+### Track 2: Finance & Market Intelligence · YC Winter 2026 growth velocity
 
 **Use case:** Hiring + team-size + funding velocity across an entire YC batch as alt-data. Run weekly to surface which startups are scaling fastest, which are stalling. Same scraper works for any future batch (S26, W27, …).
 
-**Target site:** [`ycombinator.com/companies?batch=W26`](https://www.ycombinator.com/companies?batch=W26) (batch listing, ~80 companies) + each company's profile page (`/companies/<slug>`). YC's directory is JS-rendered; Scraper Studio handles that via Bright Data's browser stack, no flag needed.
+**Target site:** [`ycombinator.com/companies?batch=Winter%202026`](https://www.ycombinator.com/companies?batch=Winter%202026) (batch listing, 198 companies) + each company's profile page (`/companies/<slug>`). YC's directory is JS-rendered; Scraper Studio handles that via Bright Data's browser stack, no flag needed.
 
 **Paste this into your coding agent:**
 
 ```text
-Build me a YC W26 growth-velocity tracker using Bright Data Scraper Studio.
+Build me a YC Winter 2026 growth-velocity tracker using Bright Data Scraper Studio.
 
-Targets: https://www.ycombinator.com/companies?batch=W26 (batch listing) and https://www.ycombinator.com/companies/<slug> (per-company profile, same template across all companies).
+Targets: https://www.ycombinator.com/companies?batch=Winter%202026 (batch listing) and https://www.ycombinator.com/companies/<slug> (per-company profile, same template across all companies).
 
 1. Verify `bdata --version`.
-2. Discovery scraper on the batch page: `bdata scraper create https://www.ycombinator.com/companies?batch=W26` with description: "For each company card on this page, extract company_name, one_line_tagline, vertical_tags (array of category badges), profile_url (the link to /companies/<slug>). Return one array element per card. The page is a single grid; no pagination." Save as DISCOVERY_ID.
+2. Discovery scraper on the batch page: `bdata scraper create https://www.ycombinator.com/companies?batch=Winter%202026` with description: "For each company card on this page, extract company_name, one_line_tagline, vertical_tags (array of category badges), profile_url (the link to /companies/<slug>). Return one array element per card. The page is a single grid; no pagination." Save as DISCOVERY_ID.
 3. PDP scraper on one profile (seed with any YC company): `bdata scraper create https://www.ycombinator.com/companies/anthropic` with description: "Extract from this YC company profile: company_name, yc_batch (e.g. S21, W26), one_line_tagline, long_description, vertical_tags (array), team_size_number (integer), status (Active / Acquired / Public / Inactive), founded_year, locations (array of city names), founders (array of objects with name and title), launched_products (array of names if shown), website_url." Save as PDP_ID.
-4. Run Discovery: `bdata scraper run $DISCOVERY_ID https://www.ycombinator.com/companies?batch=W26 --json | jq -r '.[].profile_url' > w26-companies.txt`
-5. Batch-run PDP: `bdata scraper run $PDP_ID --input-file w26-companies.txt -o w26-profiles.json`. W26 has ~80 companies; the CLI silently auto-falls back to the batch endpoint when needed (that's expected).
-6. Write 30 lines that loads w26-profiles.json, sorts by team_size_number descending, prints the top 10 W26 companies by team size, and saves the run as w26-profiles-$(date +%Y%m%d).json.
+4. Run Discovery: `bdata scraper run $DISCOVERY_ID https://www.ycombinator.com/companies?batch=Winter%202026 --json | jq -r '.[].profile_url' > w26-companies.txt`
+5. Batch-run PDP: `bdata scraper run $PDP_ID --input-file w26-companies.txt -o w26-profiles.json`. Winter 2026 has 198 companies; the CLI silently auto-falls back to the batch endpoint when needed (that's expected).
+6. Write 30 lines that loads w26-profiles.json, sorts by team_size_number descending, prints the top 10 Winter 2026 companies by team size, and saves the run as w26-profiles-$(date +%Y%m%d).json.
 7. Suggest how to re-run weekly and diff against the previous week's snapshot to surface companies whose team_size_number grew > 25% week-over-week.
 
 Constraints: real data only. YC profile pages are public, no login required. If a specific field is not on the page (e.g. founder LinkedIn URLs), return null rather than inventing a value.
